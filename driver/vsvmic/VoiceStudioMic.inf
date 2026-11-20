@@ -1,0 +1,104 @@
+; Voice Studio Virtual Microphone - root-enumerated KS capture device.
+; Exposes the "Voice Studio (Output)" recording endpoint that other apps
+; (Discord / FiveM / OBS) select as a microphone.
+;
+; The KS filter template names below (WaveMicArray1 / TopologyMicArray1)
+; MUST match the names declared in Source/Filters/minipairs.h.
+
+[Version]
+Signature="$CHICAGO$"
+Class=MEDIA
+ClassGUID={4d36e96c-e325-11ce-bfc1-08002be10318}
+Provider=%ProviderName%
+CatalogFile=VoiceStudioMic.cat
+DriverVer=10/06/2026,1.0.0.0
+PnpLockdown=1
+
+[SourceDisksNames]
+222=%DiskName%
+
+[SourceDisksFiles]
+VoiceStudioMic.sys=222
+
+[Manufacturer]
+%StdMfg%=Standard,NTAMD64
+
+[Standard.NTAMD64]
+%DeviceName%=VoiceStudioMic.Install, ROOT\VoiceStudioMic
+
+;---------------------------
+[VoiceStudioMic.Install]
+Include=ks.inf, wdmaudio.inf
+Needs=KS.Registration, WDMAUDIO.Registration
+CopyFiles=VoiceStudioMic.CopyList
+AddReg=VoiceStudioMic.AddReg
+
+[VoiceStudioMic.Install.HW]
+
+[VoiceStudioMic.Install.Services]
+AddService=VoiceStudioMic,0x2,VoiceStudioMic.Service
+
+[VoiceStudioMic.Service]
+DisplayName=%ServiceName%
+ServiceType=%SERVICE_KERNEL_DRIVER%
+StartType=%SERVICE_DEMAND_START%
+ErrorControl=%SERVICE_ERROR_NORMAL%
+ServiceBinary=%12%\VoiceStudioMic.sys
+
+;---------------------------
+; KS filter interfaces
+;---------------------------
+[VoiceStudioMic.Install.Interfaces]
+AddInterface=%KSCATEGORY_AUDIO%,%KSNAME_Wave%,VoiceStudioMic.Wave
+AddInterface=%KSCATEGORY_CAPTURE%,%KSNAME_Wave%,VoiceStudioMic.Wave
+AddInterface=%KSCATEGORY_AUDIO%,%KSNAME_Topology%,VoiceStudioMic.Topology
+
+[VoiceStudioMic.Wave]
+AddReg=VoiceStudioMic.Wave.AddReg
+
+[VoiceStudioMic.Wave.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%Wave.FriendlyName%
+
+[VoiceStudioMic.Topology]
+AddReg=VoiceStudioMic.Topology.AddReg
+
+[VoiceStudioMic.Topology.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%Topo.FriendlyName%
+
+;---------------------------
+[VoiceStudioMic.CopyList]
+VoiceStudioMic.sys,,,0x00000040
+
+[VoiceStudioMic.AddReg]
+HKR,,AssociatedFilters,,"wdmaud,drmk"
+HKR,,Driver,,VoiceStudioMic.sys
+HKR,,NTMPDriver,,"VoiceStudioMic.sys"
+HKR,Drivers,SubClasses,,"wave,mixer"
+HKR,Drivers\wave\wdmaud.drv,Driver,,wdmaud.drv
+HKR,Drivers\mixer\wdmaud.drv,Driver,,wdmaud.drv
+HKR,Drivers\wave\wdmaud.drv,Description,,%Wave.FriendlyName%
+HKR,Drivers\mixer\wdmaud.drv,Description,,%Wave.FriendlyName%
+
+;---------------------------
+[DestinationDirs]
+VoiceStudioMic.CopyList=10,system32\drivers
+
+;---------------------------
+[Strings]
+ProviderName="Voice Studio"
+StdMfg="Voice Studio"
+DiskName="Voice Studio Microphone Drivers"
+DeviceName="Voice Studio Microphone"
+ServiceName="Voice Studio Microphone Service"
+Wave.FriendlyName="Voice Studio Microphone"
+Topo.FriendlyName="Voice Studio Microphone Topology"
+Proxy.CLSID="{17CCA71B-ECD7-11D0-B908-00A0C9223196}"
+KSNAME_Wave="WaveMicArray1"
+KSNAME_Topology="TopologyMicArray1"
+KSCATEGORY_AUDIO="{6994AD04-93EF-11D0-A3CC-00A0C9223196}"
+KSCATEGORY_CAPTURE="{65E8773D-8F56-11D0-A3B9-00A0C9223196}"
+SERVICE_KERNEL_DRIVER=1
+SERVICE_DEMAND_START=3
+SERVICE_ERROR_NORMAL=1

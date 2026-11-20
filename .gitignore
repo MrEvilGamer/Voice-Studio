@@ -1,0 +1,8 @@
+node_modules
+dist
+src-tauri/target
+src-tauri/gen
+*.log
+tracker/build
+tracker/__pycache__
+src-tauri/tracker-runtime

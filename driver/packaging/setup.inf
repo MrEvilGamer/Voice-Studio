@@ -1,0 +1,20 @@
+;*** BEGIN **********************************************************
+;**                                                                **
+;** Automatically generated on: Wed Oct 07 00:35:08 2026           **
+;**                                                                **
+;** MakeCAB Version: 5.00                                 **
+;**                                                                **
+;*** BEGIN **********************************************************
+[disk list]
+1,Disk 1
+[cabinet list]
+1,1,VoiceStudioMic-submission.cab
+.inf
+1,1,VoiceStudioMic.inf,3053
+1,1,VoiceStudioMic.sys,58368
+1,1,VoiceStudioMic.cat,1160
+;*** END ************************************************************
+;**                                                                **
+;** Automatically generated on: Wed Oct 07 00:35:08 2026           **
+;**                                                                **
+;*** END ************************************************************
